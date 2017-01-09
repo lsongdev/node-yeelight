@@ -1,0 +1,11 @@
+{
+  "name": "yeelight2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:song940/node-yeelight.git",
+  "author": "Lsong <song940@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ssdp2": "^1.0.0"
+  }
+}
