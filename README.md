@@ -11,10 +11,33 @@ $ npm install yeelight
 ### Example
 
 ```js
-const yeelight = require('yeelight');
+const Yeelight = require('yeelight2');
 
-// your code here
+const light = new Yeelight('192.168.88.204', 55443);
 
+light.set_power(true);
+
+```
+
+discover your blub
+
+```js
+const Discovery = require('ssdp2');
+
+var ssdp = new Discovery();
+
+ssdp.on('response', function(response){
+  console.log(response.headers['Location']);
+});
+
+ssdp.listen(function(err){
+  
+  ssdp.search('*', {
+    MAN: 'ssdp:discover',
+    ST : 'wifi_bulb'
+  });
+  
+});
 ```
 
 ### Contributing
