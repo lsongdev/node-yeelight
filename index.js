@@ -7,8 +7,8 @@ const EventEmitter = require('events');
  * @docs http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf
  */
 function Yeelight(address, port){
-  this.queue = [];
   EventEmitter.call(this);
+  this.queue = {};
   this.socket = new tcp.Socket();
   this.socket
   .on('data', this.parse.bind(this))
@@ -25,12 +25,29 @@ function Yeelight(address, port){
 
 util.inherits(Yeelight, EventEmitter);
 
+/**
+ * [parse description]
+ * @param  {[type]} data [description]
+ * @return {[type]}      [description]
+ */
 Yeelight.prototype.parse = function(data){
   var message = JSON.parse(data.toString());
-  console.log(message);
+  this.emit(message.method, message.params, message);
+  if(typeof this.queue[ message.id ] === 'function'){
+    this.queue[ message.id ](message);
+    this.queue[ message.id ] = null;
+    delete this.queue[ message.id ];
+  }
 };
 
+/**
+ * [command description]
+ * @param  {[type]} method [description]
+ * @param  {[type]} params [description]
+ * @return {[type]}        [description]
+ */
 Yeelight.prototype.command = function(method, params){
+  params = params || [];
   var id = parseInt(Math.random() * 1000, 10);
   var request = {
     id    : id,
@@ -40,10 +57,9 @@ Yeelight.prototype.command = function(method, params){
   var message = JSON.stringify(request);
   this.socket.write(message + '\r\n');
   request.promise = new Promise(function(accept, reject){
-    request.accept = accept;
-    accept.reject  = reject;
-  });
-  this.queue.push(request);
+    // TODO: reject
+    this.queue[ id ] = accept;
+  }.bind(this));
   return request.promise;
 };
 
@@ -75,7 +91,7 @@ Yeelight.prototype.set_power = function (power, effect, duration){
   power =  (!!power || power === 'on') ? 'on' : 'off';
   effect = effect || 'smooth';
   duration = duration || 500;
-  return this.command('set_bright', [ power, effect, duration  ]);
+  return this.command('set_power', [ power, effect, duration  ]);
 };
 
 Yeelight.prototype.toggle = function (){
