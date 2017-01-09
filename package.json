@@ -1,0 +1,37 @@
+{
+  "name": "yeelight2",
+  "version": "1.3.3",
+  "main": "index.js",
+  "bin": {
+    "yeelight": "bin/yeelight.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/song940/node-yeelight.git"
+  },
+  "author": "Lsong <song940@gmail.com>",
+  "license": "MIT",
+  "description": "A Node.js lib for the yeelight bulb",
+  "dependencies": {
+    "ssdp2": "1.x.x"
+  },
+  "bugs": {
+    "url": "https://github.com/song940/node-yeelight/issues"
+  },
+  "homepage": "https://github.com/song940/node-yeelight#readme",
+  "directories": {
+    "example": "example"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "yeelight",
+    "light",
+    "bulb",
+    "yeelink",
+    "led",
+    "ssdp"
+  ]
+}
