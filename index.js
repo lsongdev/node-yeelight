@@ -25,20 +25,47 @@ function Yeelight(address, port){
   .on('error', function(err){
     this.connected = false;
     this.emit('error', err);
-    this.emit('disconnected');
+    this.emit('disconnected', this);
   }.bind(this))
   .on('end', function(){
     this.connected = false;
-    this.emit('disconnected');
+    this.emit('disconnected', this);
   }.bind(this))
   .connect(port, address, function(err){
     this.connected = true;
-    this.emit('connected');
+    this.sync().then(function(){
+      this.emit('connected', this);
+    }.bind(this));
   }.bind(this))
   return this;
 };
 
 util.inherits(Yeelight, EventEmitter);
+
+/**
+ * [props description]
+ * @type {String}
+ */
+Yeelight.prototype.props = [
+  "name", "power", "bright", "rgb", 
+  "ct", "hue", "sat", "color_mode",
+  "delayoff", "flowing", "flow_params", 
+  "music_on"
+];
+
+/**
+ * [sync description]
+ * @return {[type]} [description]
+ */
+Yeelight.prototype.sync = function(){
+  return this.get_prop.apply(this, this.props)
+  .then(function(res){
+    Object.keys(res).forEach(function(key){
+      this[ key ] = res[ key ];
+    }.bind(this));
+    return res;
+  }.bind(this));
+};
 
 /**
  * [discover description]
@@ -52,7 +79,7 @@ Yeelight.discover = function(callback){
     if(!~yeelights.indexOf(address)){
       yeelights.push(address);
       var yeelight = new Yeelight( address );
-      callback && callback(yeelight);
+      yeelight.on('connected', callback);
     };
   });
   discover.search('wifi_bulb');
@@ -65,6 +92,11 @@ Yeelight.discover = function(callback){
  */
 Yeelight.prototype.parse = function(data){
   var message = JSON.parse(data.toString());
+  if(message.method === 'props'){
+    Object.keys(message.params).forEach(function(key){
+      this[ key ] = message.params[ key ];
+    }.bind(this));
+  }
   this.emit(message.method, message.params, message);
   if(typeof this.queue[ message.id ] === 'function'){
     this.queue[ message.id ](message);
@@ -80,8 +112,8 @@ Yeelight.prototype.parse = function(data){
  * @return {[type]}        [description]
  */
 Yeelight.prototype.command = function(method, params){
-  params = params || [];
-  var id = parseInt(Math.random() * 1000, 10);
+  params = [].slice.call(params || []);
+  var id = (Math.random() * 1e3) & 0xff;
   var request = {
     id    : id,
     method: method,
@@ -90,8 +122,11 @@ Yeelight.prototype.command = function(method, params){
   var message = JSON.stringify(request);
   this.socket.write(message + '\r\n');
   request.promise = new Promise(function(accept, reject){
-    // TODO: reject
-    this.queue[ id ] = accept;
+    this.queue[ id ] = function(res){
+      var err = res.error;
+      if(err) return reject(err);
+      accept(res);
+    };
   }.bind(this));
   return request.promise;
 };
@@ -116,10 +151,10 @@ Yeelight.prototype.command = function(method, params){
  * 
  */
 Yeelight.prototype.get_prop = function (prop1, prop2, propN){
-  var props = [].slice.call(arguments);
+  var props = [].concat.apply([], arguments);
   return this.command('get_prop', props).then(function(res){
-    return props.reduce(function(name, item){
-      item[ name ] = res.result[ name ];
+    return props.reduce(function(item, name, index){
+      item[ name ] = res.result[ index ];
       return item;
     }, {});
   });
@@ -150,6 +185,7 @@ Yeelight.prototype.set_name = function (name){
  */
 Yeelight.prototype.set_ct_abx = function (ct_value, effect, duration){
   ct_value = ct_value || 3500;
+  ct_value = Math.max(1700, Math.min(ct_value, 6500));
   effect = effect || 'smooth';
   duration = duration || 500;
   return this.command('set_ct_abx', [ ct_value, effect, duration ]);
@@ -162,7 +198,7 @@ Yeelight.prototype.set_ct_abx = function (ct_value, effect, duration){
  * @param {[type]} duration  [Refer to "set_ct_abx" method.]
  */
 Yeelight.prototype.set_rgb = function (rgb_value, effect, duration){
-  rgb_value = rgb_value || 255;
+  rgb_value = Math.max(Math.min(0xffffff, rgb_value), 0);
   effect = effect || 'smooth';
   duration = duration || 500;
   return this.command('set_rgb', [ rgb_value, effect, duration ]);
@@ -177,6 +213,10 @@ to 100
  * @param {[type]} duration [Refer to "set_ct_abx" method.]
  */
 Yeelight.prototype.set_hsv = function (hue, sat, effect, duration){
+  hue = Math.max(0, Math.min(hue, 359));
+  sat = Math.max(0, Math.min(sat, 100));
+  effect = effect || 'smooth';
+  duration = duration || 500;
   return this.command('set_hsv', [ hue, sat, effect, duration ]);
 };
 /**
@@ -188,6 +228,9 @@ Yeelight.prototype.set_hsv = function (hue, sat, effect, duration){
  * @param {[type]} duration   [Refer to "set_ct_abx" method.]
  */
 Yeelight.prototype.set_bright = function (brightness, effect, duration){
+  brightness = Math.max(1, Math.min(brightness, 100));
+  effect = effect || 'smooth';
+  duration = duration || 500;
   return this.command('set_bright', [ brightness, effect, duration ]);
 };
 /**
@@ -240,24 +283,47 @@ Yeelight.prototype.stop_cf = function (){
 Yeelight.prototype.set_scene = function (type){
   return this.command('set_scene', arguments);
 };
-
-Yeelight.prototype.cron_add = function (name){
+/**
+ * [cron_add description]
+ * @param  {[type]} type  [description]
+ * @param  {[type]} value [description]
+ * @return {[type]}       [description]
+ */
+Yeelight.prototype.cron_add = function (type, value){
   return this.command('cron_add', arguments);
 };
-
-Yeelight.prototype.cron_get = function (name){
+/**
+ * [cron_get description]
+ * @param  {[type]} type [description]
+ * @return {[type]}      [description]
+ */
+Yeelight.prototype.cron_get = function (type){
   return this.command('cron_get', arguments);
 };
-
-Yeelight.prototype.cron_del = function (name){
+/**
+ * [cron_del description]
+ * @param  {[type]} type [description]
+ * @return {[type]}      [description]
+ */
+Yeelight.prototype.cron_del = function (type){
   return this.command('cron_del', arguments);
 };
-
+/**
+ * [set_adjust description]
+ * @param {[type]} action [description]
+ * @param {[type]} prop   [description]
+ */
 Yeelight.prototype.set_adjust = function (action, prop){
   return this.command('set_adjust', [ action, prop ]);
 };
-
+/**
+ * [set_music description]
+ * @param {[type]} action [description]
+ * @param {[type]} host   [description]
+ * @param {[type]} port   [description]
+ */
 Yeelight.prototype.set_music = function (action, host, port){
+  action = action & 0xff;
   return this.command('set_music', arguments);
 };
 
