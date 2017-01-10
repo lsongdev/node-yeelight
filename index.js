@@ -48,7 +48,7 @@ Yeelight.discover = function(callback){
   var yeelights = [];
   var discover = ssdp({ port: 1982 });
   discover.on('response', function(response){
-    var address = response['Location'];
+    var address = response.headers['Location'];
     if(!~yeelights.indexOf(address)){
       yeelights.push(address);
       var yeelight = new Yeelight( address );
