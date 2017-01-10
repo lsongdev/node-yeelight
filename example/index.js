@@ -1,5 +1,12 @@
 const Yeelight = require('..');
 
-const light = new Yeelight('localhost', 55443);
+Yeelight.discover(function(light){
+  
+  function blink(){
+    light.toggle();
+  };
+  
+  setInterval(blink, 5000);
+  
+});
 
-light.set_power(true);

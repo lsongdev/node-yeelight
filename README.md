@@ -1,11 +1,11 @@
-## yeelight ![yeelight@1.0.0](https://img.shields.io/npm/v/yeelight.svg)
+## Yeelight ![yeelight2@1.0.0](https://img.shields.io/npm/v/yeelight2.svg)
 
-> 
+> A Node.js lib for the yeelight bulb
 
 ### Installation
 
 ```bash
-$ npm install yeelight
+$ npm i yeelight2
 ```
 
 ### Example
@@ -13,31 +13,18 @@ $ npm install yeelight
 ```js
 const Yeelight = require('yeelight2');
 
-const light = new Yeelight('192.168.88.204', 55443);
-
-light.set_power(true);
-
-```
-
-discover your blub
-
-```js
-const Discovery = require('ssdp2');
-
-var ssdp = new Discovery();
-
-ssdp.on('response', function(response){
-  console.log(response.headers['Location']);
-});
-
-ssdp.listen(function(err){
+Yeelight.discover(function(light){
   
-  ssdp.search('*', {
-    MAN: 'ssdp:discover',
-    ST : 'wifi_bulb'
-  });
+  function blink(){
+    light.toggle();
+  };
+  
+  setInterval(blink, 5000);
   
 });
+
+
+
 ```
 
 ### Contributing

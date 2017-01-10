@@ -4,5 +4,9 @@
   "main": "index.js",
   "repository": "git@github.com:song940/node-yeelight.git",
   "author": "Lsong <song940@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "description": "A Node.js lib for the yeelight bulb",
+  "dependencies": {
+    "ssdp2": "^1.0.1"
+  }
 }

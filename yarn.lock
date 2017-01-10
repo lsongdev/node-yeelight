@@ -2,6 +2,6 @@
 # yarn lockfile v1
 
 
-ssdp2@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/ssdp2/-/ssdp2-1.0.0.tgz#414a0abe620a8f7b1d53e327982809bcd5c4a08d"
+ssdp2@^1.0.1:
+  version "1.0.1"
+  resolved "http://r.npm.sankuai.com/ssdp2/download/ssdp2-1.0.1.tgz#0a0437f25021a1147de10c6d4c083bc841e57f6f"
