@@ -1,7 +1,7 @@
 const url          = require('url');
 const tcp          = require('net');
-const ssdp         = require('ssdp2');
 const util         = require('util');
+const ssdp         = require('ssdp2');
 const EventEmitter = require('events');
 /**
  * [Yeelight description]
@@ -131,7 +131,12 @@ Yeelight.prototype.command = function(method, params){
   return request.promise;
 };
 
-
+/**
+ * [exec description]
+ * @param  {[type]} method [description]
+ * @param  {[type]} params [description]
+ * @return {[type]}        [description]
+ */
 Yeelight.prototype.exec = function(method, params){
   return this[ method ].apply(this, params);
 };
@@ -164,6 +169,7 @@ Yeelight.prototype.get_prop = function (prop1, prop2, propN){
     }, {});
   });
 };
+
 /**
  * set_name This method is used to name the device. The name will be stored on the
  *          device and reported in discovering response. 
@@ -189,12 +195,10 @@ Yeelight.prototype.set_name = function (name){
  *                 milliseconds. The minimum support duration is 30 milliseconds.
  */
 Yeelight.prototype.set_ct_abx = function (ct_value, effect, duration){
-  ct_value = ct_value || 3500;
-  ct_value = Math.max(1700, Math.min(ct_value, 6500));
-  effect = effect || 'smooth';
-  duration = duration || 500;
-  return this.command('set_ct_abx', [ ct_value, effect, duration ]);
+  ct_value = Math.max(1700, Math.min(+ct_value || 3500, 6500));
+  return this.command('set_ct_abx', [ ct_value, effect || 'smooth', duration || 500 ]);
 };
+
 /**
  * set_rgb This method is used to change the color of a smart LED.
  * @param rgb_value is the target color, whose type is integer. It should be
@@ -203,11 +207,10 @@ Yeelight.prototype.set_ct_abx = function (ct_value, effect, duration){
  * @param {[type]} duration  [Refer to "set_ct_abx" method.]
  */
 Yeelight.prototype.set_rgb = function (rgb_value, effect, duration){
-  rgb_value = Math.max(Math.min(0xffffff, +rgb_value), 0);
-  effect = effect || 'smooth';
-  duration = duration || 500;
-  return this.command('set_rgb', [ rgb_value, effect, duration ]);
+  rgb_value = Math.max(0, Math.min(+rgb_value, 0xffffff));
+  return this.command('set_rgb', [ rgb_value, effect || 'smooth', duration || 500 ]);
 };
+
 /**
  * [set_hsv This method is used to change the color of a smart LED]
  * @param {[type]} hue is the target hue value, whose type is integer. 
@@ -218,12 +221,11 @@ to 100
  * @param {[type]} duration [Refer to "set_ct_abx" method.]
  */
 Yeelight.prototype.set_hsv = function (hue, sat, effect, duration){
-  hue = Math.max(0, Math.min(hue, 359));
-  sat = Math.max(0, Math.min(sat, 100));
-  effect = effect || 'smooth';
-  duration = duration || 500;
-  return this.command('set_hsv', [ hue, sat, effect, duration ]);
+  hue = Math.max(0, Math.min(+hue, 359));
+  sat = Math.max(0, Math.min(+sat, 100));
+  return this.command('set_hsv', [ hue, sat, effect || 'smooth', duration || 500 ]);
 };
+
 /**
  * [set_bright This method is used to change the brightness of a smart LED.]
  * @param brightness is the target brightness. The type is integer and ranges
@@ -233,11 +235,10 @@ Yeelight.prototype.set_hsv = function (hue, sat, effect, duration){
  * @param {[type]} duration   [Refer to "set_ct_abx" method.]
  */
 Yeelight.prototype.set_bright = function (brightness, effect, duration){
-  brightness = Math.max(1, Math.min(brightness, 100));
-  effect = effect || 'smooth';
-  duration = duration || 500;
-  return this.command('set_bright', [ brightness, effect, duration ]);
+  brightness = Math.max(1, Math.min(+brightness, 100));
+  return this.command('set_bright', [ brightness, effect || 'smooth', duration || 500 ]);
 };
+
 /**
  * set_power This method is used to switch on or off the smart LED (software
  *           managed on/off).
@@ -248,11 +249,10 @@ Yeelight.prototype.set_bright = function (brightness, effect, duration){
  * @param {[type]} duration [description]
  */
 Yeelight.prototype.set_power = function (power, effect, duration){
-  power =  power === 'on' ? 'on' : 'off';
-  effect = effect || 'smooth';
-  duration = duration || 500;
-  return this.command('set_power', [ power, effect, duration  ]);
+  power =  ~[ 1, true, '1','on' ].indexOf(power) ? 'on' : 'off';
+  return this.command('set_power', [ power, effect || 'smooth', duration || 500  ]);
 };
+
 /**
  * [toggle This method is used to toggle the smart LED.]
  * @return {[type]} [description]
