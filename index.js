@@ -131,6 +131,11 @@ Yeelight.prototype.command = function(method, params){
   return request.promise;
 };
 
+
+Yeelight.prototype.exec = function(method, params){
+  return this[ method ].apply(this, params);
+};
+
 /**
  * get_prop
  * This method is used to retrieve current property of smart LED.
@@ -198,7 +203,7 @@ Yeelight.prototype.set_ct_abx = function (ct_value, effect, duration){
  * @param {[type]} duration  [Refer to "set_ct_abx" method.]
  */
 Yeelight.prototype.set_rgb = function (rgb_value, effect, duration){
-  rgb_value = Math.max(Math.min(0xffffff, rgb_value), 0);
+  rgb_value = Math.max(Math.min(0xffffff, +rgb_value), 0);
   effect = effect || 'smooth';
   duration = duration || 500;
   return this.command('set_rgb', [ rgb_value, effect, duration ]);
@@ -243,7 +248,7 @@ Yeelight.prototype.set_bright = function (brightness, effect, duration){
  * @param {[type]} duration [description]
  */
 Yeelight.prototype.set_power = function (power, effect, duration){
-  power =  (!!power || power === 'on') ? 'on' : 'off';
+  power =  power === 'on' ? 'on' : 'off';
   effect = effect || 'smooth';
   duration = duration || 500;
   return this.command('set_power', [ power, effect, duration  ]);
