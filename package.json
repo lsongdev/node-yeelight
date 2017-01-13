@@ -1,7 +1,10 @@
 {
   "name": "yeelight2",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "main": "index.js",
+  "bin":{
+    "yeelight": "bin/yeelight.js"
+  },
   "repository": "git@github.com:song940/node-yeelight.git",
   "author": "Lsong <song940@gmail.com>",
   "license": "MIT",

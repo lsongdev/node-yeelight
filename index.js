@@ -25,16 +25,16 @@ function Yeelight(address, port){
   .on('error', function(err){
     this.connected = false;
     this.emit('error', err);
-    this.emit('disconnected', this);
+    this.emit('disconnect', this);
   }.bind(this))
   .on('end', function(){
     this.connected = false;
-    this.emit('disconnected', this);
+    this.emit('disconnect', this);
   }.bind(this))
   .connect(port, address, function(err){
     this.connected = true;
     this.sync().then(function(){
-      this.emit('connected', this);
+      this.emit('connect', this);
     }.bind(this));
   }.bind(this))
   return this;
@@ -79,10 +79,10 @@ Yeelight.discover = function(callback){
     if(!~yeelights.indexOf(address)){
       yeelights.push(address);
       var yeelight = new Yeelight( address );
-      yeelight.on('connected', callback);
+      yeelight.on('connect', callback);
     };
   });
-  discover.search('wifi_bulb');
+  return discover.search('wifi_bulb');
 };
 
 /**
