@@ -3,6 +3,13 @@ const tcp          = require('net');
 const util         = require('util');
 const ssdp         = require('ssdp2');
 const EventEmitter = require('events');
+
+console.debug = function(){
+  if(~[ '*', 'yeelight' ].indexOf(process.env.DEBUG)){
+    console.log.apply(console, arguments);
+  }
+}
+
 /**
  * [Yeelight description]
  * @docs http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf
@@ -16,12 +23,19 @@ function Yeelight(address, port){
     address = u.hostname;
     port    = u.port;
   }
+  var buffer = '';
   port = port || 55443;
   EventEmitter.call(this);
   this.queue = {};
   this.socket = new tcp.Socket();
   this.socket
-  .on('data', this.parse.bind(this))
+  .on('data', function(chunk){
+    buffer += chunk;
+    buffer.split(/\r\n/g).filter(function(line){
+      return !!line;
+    }).forEach(this.parse.bind(this));
+    buffer = '';
+  }.bind(this))
   .on('error', function(err){
     this.connected = false;
     this.emit('error', err);
@@ -94,12 +108,13 @@ Yeelight.discover = function(callback){
  * @return {[type]}      [description]
  */
 Yeelight.prototype.parse = function(data){
+  console.debug('->', data);
   var message = JSON.parse(data.toString());
   if(message.method === 'props'){
     Object.keys(message.params).forEach(function(key){
       this[ key ] = message.params[ key ];
     }.bind(this));
-  }
+  } 
   this.emit(message.method, message.params, message);
   if(typeof this.queue[ message.id ] === 'function'){
     this.queue[ message.id ](message);
@@ -123,9 +138,18 @@ Yeelight.prototype.command = function(method, params){
     params: params
   };
   var message = JSON.stringify(request);
+  console.debug('<-', message);
   this.socket.write(message + '\r\n');
   request.promise = new Promise(function(accept, reject){
+    var respond = false;
+    var timeout = setTimeout(function(){
+      if(!respond){
+        reject(new Error('timeout'));
+      }
+    }, 3000);
     this.queue[ id ] = function(res){
+      if(respond) return;
+      respond = true;
       var err = res.error;
       if(err) return reject(err);
       accept(res);
