@@ -36,7 +36,7 @@ function Yeelight(address, port){
     this.sync().then(function(){
       this.emit('connect', this);
     }.bind(this));
-  }.bind(this))
+  }.bind(this));
   return this;
 };
 
@@ -79,7 +79,10 @@ Yeelight.discover = function(callback){
     if(!~yeelights.indexOf(address)){
       yeelights.push(address);
       var yeelight = new Yeelight( address );
-      yeelight.on('connect', callback);
+      yeelight.id = response.headers.id;
+      yeelight.on('connect', function(){
+        callback(this, response);
+      });
     };
   });
   return discover.search('wifi_bulb');
@@ -129,16 +132,6 @@ Yeelight.prototype.command = function(method, params){
     };
   }.bind(this));
   return request.promise;
-};
-
-/**
- * [exec description]
- * @param  {[type]} method [description]
- * @param  {[type]} params [description]
- * @return {[type]}        [description]
- */
-Yeelight.prototype.exec = function(method, params){
-  return this[ method ].apply(this, params);
 };
 
 /**
@@ -215,8 +208,7 @@ Yeelight.prototype.set_rgb = function (rgb_value, effect, duration){
  * [set_hsv This method is used to change the color of a smart LED]
  * @param {[type]} hue is the target hue value, whose type is integer. 
  *                 It should be expressed in decimal integer ranges from 0 to 359.
- * @param {[type]} sat is the target saturation value whose type is integer. It's range is 0
-to 100
+ * @param {[type]} sat is the target saturation value whose type is integer. It's range is 0 to 100
  * @param {[type]} effect   [Refer to "set_ct_abx" method.]
  * @param {[type]} duration [Refer to "set_ct_abx" method.]
  */

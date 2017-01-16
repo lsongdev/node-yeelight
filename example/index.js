@@ -5,14 +5,14 @@ Yeelight.discover(function(light){
   console.log(light.name);
 
   // light.set_name('Yeelight');
-  light.set_rgb('16711935');
+  // light.set_rgb('16711935');
   // light.set_ct_abx(1700);
   // light.set_bright(50);
   
-  // function blink(){
-  //   light.toggle();
-  // }
-  // setInterval(blink, 2000);
+  function blink(){
+    light.toggle();
+  }
+  setInterval(blink, 2000);
   
 });
 

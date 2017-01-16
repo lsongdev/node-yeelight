@@ -1,4 +1,4 @@
-## Yeelight ![yeelight2@1.0.0](https://img.shields.io/npm/v/yeelight2.svg)
+## Yeelight ![yeelight2](https://img.shields.io/npm/v/yeelight2.svg)
 
 > A Node.js lib for the yeelight bulb
 

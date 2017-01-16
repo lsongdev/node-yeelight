@@ -10,10 +10,18 @@ if(typeof method === 'undefined'){
   return console.error('[Yeelight] method are required!');
 }
 
-Yeelight.discover(function(light){
+Yeelight.discover(function(light, response){
 
-  light.exec(method, params).then(function(res){
-    process.exit(0);
-  });
+  if(method in light){
+    light[ method ].apply(light, params).then(function(res){
+      process.exit(0);
+    }, function(err){
+      console.error(err);
+      process.exit(1);
+    });  
+  }else{
+    console.error('method `%s` not exists', method)
+    process.exit(2);
+  }
 
 });
