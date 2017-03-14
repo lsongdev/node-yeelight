@@ -109,17 +109,24 @@ Yeelight.discover = function(callback){
  */
 Yeelight.prototype.parse = function(data){
   console.debug('->', data);
-  var message = JSON.parse(data.toString());
-  if(message.method === 'props'){
-    Object.keys(message.params).forEach(function(key){
-      this[ key ] = message.params[ key ];
-    }.bind(this));
-  } 
-  this.emit(message.method, message.params, message);
-  if(typeof this.queue[ message.id ] === 'function'){
-    this.queue[ message.id ](message);
-    this.queue[ message.id ] = null;
-    delete this.queue[ message.id ];
+  var yl = this;
+  function parseResult(result) {
+    var message = JSON.parse(result);
+    if(message.method === 'props'){
+      Object.keys(message.params).forEach(function(key){
+	yl[ key ] = message.params[ key ];
+      }.bind(yl));
+    }
+    yl.emit(message.method, message.params, message);
+    if(typeof yl.queue[ message.id ] === 'function'){
+      yl.queue[ message.id ](message);
+      yl.queue[ message.id ] = null;
+      delete yl.queue[ message.id ];
+    }
+  }
+  var results = data.toString().replace("}{","}}{{").split("}{");
+  for (i = 0; i < results.length; i++) {
+    parseResult(results[i]);
   }
 };
 
