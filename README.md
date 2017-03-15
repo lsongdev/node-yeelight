@@ -5,7 +5,7 @@
 ### Installation
 
 ```bash
-$ npm i yeelight2
+$ npm i yeelight2 --save
 ```
 
 ### Example
