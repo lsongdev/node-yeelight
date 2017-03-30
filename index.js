@@ -6,7 +6,7 @@ const EventEmitter = require('events');
 
 console.debug = function(){
   if(~[ '*', 'yeelight' ].indexOf(process.env.DEBUG)){
-    console.log.apply(console, arguments);
+    console.log('[Yeelight]', util.format.apply(null, arguments));
   }
 }
 
@@ -57,6 +57,30 @@ function Yeelight(address, port){
 util.inherits(Yeelight, EventEmitter);
 
 /**
+ * [discover description]
+ * @return {[type]} [description]
+ */
+Yeelight.discover = function(callback){
+  var yeelights = [];
+  var discover = ssdp({ port: 1982 });
+  discover.on('response', function(response){
+    var address = response.headers['Location'];
+    console.debug('received response from', address);
+    if(address && (!~yeelights.indexOf(address))){
+      yeelights.push(address);
+      var yeelight = new Yeelight( address );
+      yeelight.id = response.headers.id;
+      yeelight.on('connect', function(){
+        callback(this, response);
+      });
+    };
+    
+  });
+  console.debug('start finding ...');
+  return discover.search('wifi_bulb');
+};
+
+/**
  * [props description]
  * @type {String}
  */
@@ -79,27 +103,6 @@ Yeelight.prototype.sync = function(){
     }.bind(this));
     return res;
   }.bind(this));
-};
-
-/**
- * [discover description]
- * @return {[type]} [description]
- */
-Yeelight.discover = function(callback){
-  var yeelights = [];
-  var discover = ssdp({ port: 1982 });
-  discover.on('response', function(response){
-    var address = response.headers['Location'];
-    if(address && (!~yeelights.indexOf(address))){
-      yeelights.push(address);
-      var yeelight = new Yeelight( address );
-      yeelight.id = response.headers.id;
-      yeelight.on('connect', function(){
-        callback(this, response);
-      });
-    };
-  });
-  return discover.search('wifi_bulb');
 };
 
 /**
