@@ -33,6 +33,18 @@ setBrightness().then(close)
 
 For a complete example look at `example/index.js`.
 
+
+### Debug
+
+To enable debug on Windows : 
+
+```
+set DEBUG=yeelight
+```
+
+Then start your app.
+
+
 ### Contributing
 - Fork this Repo first
 - Clone your Repo
