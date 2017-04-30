@@ -8,27 +8,30 @@
 $ npm i yeelight2 --save
 ```
 
-### Example
+### Simple example
 
 ```js
-const Yeelight = require('yeelight2');
+const light = require('yeelight2')('yeelight://192.168.1.123:55443')
 
-Yeelight.discover(function(light){
+let brightness = 30
 
-  console.log(light.name);
+console.log('opening connection...')
 
-  // light.set_name('Yeelight');
-  // light.set_rgb(0xff00ff);
-  // light.set_ct_abx(1700);
-  // light.set_bright(50);
-  
-  function blink(){
-    light.toggle();
-  }
-  setInterval(blink, 2000);
-  
-});
+let setBrightness = () => light.set_bright(brightness)
+    .then(() => {
+        console.log('set brightness to ' + brightness + '% succeed :)')
+    })
+    .catch(() => console.log('failed at setting brightness to ' + brightness + '% :('))
+
+let close = () => {
+    console.log('closing connection...')
+    light.exit()
+}
+
+setBrightness().then(close)
 ```
+
+For a complete example look at `example/index.js`.
 
 ### Contributing
 - Fork this Repo first
