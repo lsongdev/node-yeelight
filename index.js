@@ -15,13 +15,14 @@ console.debug = function(){
  * @docs http://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf
  */
 function Yeelight(address, port){
-  if(!(this instanceof Yeelight)){
-    return new Yeelight(address, port);
-  }
   var u = url.parse(address);
   if(u.protocol === 'yeelight:'){
     address = u.hostname;
     port    = u.port;
+  }
+  if(!(this instanceof Yeelight)){
+    console.debug('creating new instance of Yeelight with addr & port', address, port)
+    return new Yeelight(address, port);
   }
   var buffer = '';
   port = port || 55443;
