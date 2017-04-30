@@ -1,19 +1,53 @@
-const Yeelight = require('..');
+const light = require('yeelight2')('yeelight://192.168.31.123:55443')
 
-Yeelight.discover(function(light){
+let brightness = 30
 
-  console.log(light.name);
+console.log('opening connection...')
 
-  // light.set_name('Yeelight');
-  // light.set_rgb('16711935');
-  // light.set_ct_abx(1700);
-  // light.set_bright(50);
-  // light.set_hsv(20, 68);
-  
-  function blink(){
-    light.toggle();
-  }
-  setInterval(blink, 2000);
-  
-});
+let getName = () => light.get_prop('name')
+  .then((response) => console.log('bulb name is : ' + response.name))
+  .catch(() => console.log('failed at getting name :('))
 
+let getBrightness = () => light.get_prop('bright')
+  .then((response) => console.log('brightness is : ' + response.bright + '%'))
+  .catch(() => console.log('failed at getting brightness :('))
+
+let setBrightness = () => light.set_bright(brightness)
+  .then(() => {
+    console.log('set brightness to ' + brightness + '% succeed :)')
+  })
+  .catch(() => console.log('failed at setting brightness to ' + brightness + '% :('))
+
+let increaseBrightness = () => setBrightness(brightness = brightness + 30)
+
+let decreaseBrightness = () => setBrightness(brightness = brightness - 30)
+
+let delay = (time) => {
+  time = time || 2000
+  return new Promise((resolve) => setTimeout(resolve, time))
+}
+
+let shortDelay = () => delay(1000)
+
+let longDelay = () => delay(4000)
+
+let toggle = () => light.toggle()
+  .then(() => console.log('toggle succeed :)'))
+  .catch(() => console.log('failed at toggling light :('))
+
+let close = () => {
+  console.log('closing connection...')
+  light.exit()
+}
+
+getName()
+  .then(setBrightness)
+  .then(longDelay)
+  .then(getBrightness)
+  .then(increaseBrightness)
+  .then(delay)
+  .then(getBrightness)
+  .then(toggle)
+  .then(shortDelay)
+  .then(toggle)
+  .then(close)
