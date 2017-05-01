@@ -1,4 +1,4 @@
-## Yeelight ![yeelight2](https://img.shields.io/npm/v/yeelight2.svg)
+## Yeelight ![Yeelight2](https://img.shields.io/npm/v/yeelight2.svg)
 
 > A Node.js lib for the yeelight bulb
 
@@ -11,27 +11,22 @@ $ npm i yeelight2 --save
 ### Simple example
 
 ```js
-const light = require('yeelight2')('yeelight://192.168.1.123:55443')
+const Yeelight = require('yeelight2');
 
-let brightness = 30
+Yeelight.discover(function(light){
 
-console.log('opening connection...')
+  console.log(light.name);
 
-let setBrightness = () => light.set_bright(brightness)
-    .then(() => {
-        console.log('set brightness to ' + brightness + '% succeed :)')
-    })
-    .catch(() => console.log('failed at setting brightness to ' + brightness + '% :('))
+  function blink(){
+    light.toggle();
+  }
 
-let close = () => {
-    console.log('closing connection...')
-    light.exit()
-}
-
-setBrightness().then(close)
+  setInterval(blink, 2000);
+  
+});
 ```
 
-For a complete example look at `example/index.js`.
+For a complete example look at <example/index.js> .
 
 
 ### Debug

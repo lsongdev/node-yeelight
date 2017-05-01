@@ -1,53 +1,96 @@
-const light = require('yeelight2')('yeelight://192.168.31.123:55443')
+const Yeelight = require('..');
 
-let brightness = 30
 
-console.log('opening connection...')
-
-let getName = () => light.get_prop('name')
-  .then((response) => console.log('bulb name is : ' + response.name))
-  .catch(() => console.log('failed at getting name :('))
-
-let getBrightness = () => light.get_prop('bright')
-  .then((response) => console.log('brightness is : ' + response.bright + '%'))
-  .catch(() => console.log('failed at getting brightness :('))
-
-let setBrightness = () => light.set_bright(brightness)
-  .then(() => {
-    console.log('set brightness to ' + brightness + '% succeed :)')
-  })
-  .catch(() => console.log('failed at setting brightness to ' + brightness + '% :('))
-
-let increaseBrightness = () => setBrightness(brightness = brightness + 30)
-
-let decreaseBrightness = () => setBrightness(brightness = brightness - 30)
-
-let delay = (time) => {
-  time = time || 2000
-  return new Promise((resolve) => setTimeout(resolve, time))
+function sleep(time){
+  time = time || 3000;
+  return function(o){
+    return new Promise(fn => setTimeout(() => fn(o), time));
+  };
 }
 
-let shortDelay = () => delay(1000)
-
-let longDelay = () => delay(4000)
-
-let toggle = () => light.toggle()
-  .then(() => console.log('toggle succeed :)'))
-  .catch(() => console.log('failed at toggling light :('))
-
-let close = () => {
-  console.log('closing connection...')
-  light.exit()
-}
-
-getName()
-  .then(setBrightness)
-  .then(longDelay)
-  .then(getBrightness)
-  .then(increaseBrightness)
-  .then(delay)
-  .then(getBrightness)
-  .then(toggle)
-  .then(shortDelay)
-  .then(toggle)
-  .then(close)
+Promise.resolve()
+.then(() => new Promise(accept => {
+  Yeelight.discover(function(light){
+    this.close();
+    accept(light);
+  });
+}))
+.then(light => {
+  light // get name
+  .get_prop('name')
+  .then(response => console.log('Your bulb name is: [%s]', response.name))
+  return light;
+})
+.then(light => {
+  light // turn on light
+  .set_power('on')
+  .then(response => console.log('turn on light succeed'))
+  return light;
+})
+.then(light => {
+  light // set color to white
+  .set_rgb(0xffffff)
+  .then(response => console.log('set color to white(0xffffff) succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light // set brightness to 30%
+  .set_bright(30)
+  .then(response => console.log('set brightness to 30% succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light
+  .toggle()
+  .then(response => console.log('toggle succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light
+  .toggle()
+  .then(response => console.log('toggle succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light // set brightness to 100%
+  .set_bright(100)
+  .then(response => console.log('set brightness to 100% succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light // set color to red
+  .set_rgb(0xff0000)
+  .then(response => console.log('set color to red(0xff0000) succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light // set color to green
+  .set_rgb(0x00ff00)
+  .then(response => console.log('set color to green(0x00ff00) succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light // set color to blue
+  .set_rgb(0x0000ff)
+  .then(response => console.log('set color to blue(0x0000ff) succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light // turn off light
+  .set_power('off')
+  .then(response => console.log('turn off light succeed'))
+  return light;
+})
+.then(sleep())
+.then(light => {
+  light.exit();
+  console.log('Bye! have a nice day :)');
+})

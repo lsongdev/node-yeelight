@@ -4,6 +4,9 @@ const util         = require('util');
 const ssdp         = require('ssdp2');
 const EventEmitter = require('events');
 
+/**
+ * debug
+ */
 console.debug = function(){
   if(~[ '*', 'yeelight' ].indexOf(process.env.DEBUG)){
     console.log('[Yeelight]', util.format.apply(null, arguments));
@@ -55,15 +58,21 @@ function Yeelight(address, port){
   return this;
 };
 
+/**
+ * Yeelight extends EventEmitter
+ */
 util.inherits(Yeelight, EventEmitter);
 
 /**
  * [discover description]
  * @return {[type]} [description]
  */
-Yeelight.discover = function(callback){
+Yeelight.discover = function(port, callback){
+  if(typeof port === 'function'){
+    callback = port; port = 1982;
+  }
   var yeelights = [];
-  var discover = ssdp({ port: 1982 });
+  var discover = ssdp({ port: port || 1982 });
   discover.on('response', function(response){
     var address = response.headers['Location'];
     console.debug('received response from', address);
@@ -72,7 +81,7 @@ Yeelight.discover = function(callback){
       var yeelight = new Yeelight( address );
       yeelight.id = response.headers.id;
       yeelight.on('connect', function(){
-        callback(this, response);
+        callback.call(discover, this, response);
       });
     };
     
