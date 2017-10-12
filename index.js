@@ -152,29 +152,24 @@ Yeelight.prototype.parse = function(data){
 Yeelight.prototype.command = function(method, params){
   params = [].slice.call(params || []);
   var id = (Math.random() * 1e3) & 0xff;
-  var request = {
-    id    : id,
-    method: method,
-    params: params
-  };
+  var request = { id, method, params };
   var message = JSON.stringify(request);
-  console.debug('<-', message);
-  this.socket.write(message + '\r\n');
-  request.promise = new Promise(function(accept, reject){
-    var respond = false;
-    var timeout = setTimeout(function(){
-      if(!respond){
-        reject(new Error('timeout'));
-      }
-    }, 3000);
-    this.queue[ id ] = function(res){
-      if(respond) return;
-      respond = true;
-      var err = res.error;
-      if(err) return reject(err);
-      accept(res);
-    };
-  }.bind(this));
+  request.promise = new Promise((accept, reject) => {
+    console.debug('<-', message);
+    this.socket.write(message + '\r\n', err => {
+      var respond = false;
+      var timeout = setTimeout(function(){
+        if(!respond) reject(new Error('Network timeout, Yeelight not response'));
+      }, 3000);
+      this.queue[ id ] = function(res){
+        if(respond) return;
+        respond = true;
+        var err = res.error;
+        if(err) return reject(err);
+        accept(res);
+      };
+    });
+  });
   return request.promise;
 };
 
