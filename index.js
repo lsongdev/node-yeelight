@@ -7,11 +7,7 @@ const EventEmitter = require('events');
 /**
  * debug
  */
-console.debug = function(){
-  if(~[ '*', 'yeelight' ].indexOf(process.env.DEBUG)){
-    console.log('[Yeelight]', util.format.apply(null, arguments));
-  }
-}
+console.debug = util.debuglog('yeelight');
 
 /**
  * [Yeelight description]
@@ -164,6 +160,7 @@ Yeelight.prototype.command = function(method, params){
       this.queue[ id ] = function(res){
         if(respond) return;
         respond = true;
+        clearTimeout(timeout);
         var err = res.error;
         if(err) return reject(err);
         accept(res);
