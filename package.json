@@ -22,9 +22,14 @@
   "directories": {
     "example": "example"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "docdash": "^1.1.1",
+    "jsdoc": "^3.6.3"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:docs": "jsdoc -c jsdoc.json",
+    "build:docs:watch": "npx nodemon --exec 'npx jsdoc -c jsdoc.json' --watch index"
   },
   "keywords": [
     "yeelight",

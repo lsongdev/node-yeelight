@@ -1,4 +1,48 @@
-const url          = require('url');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>index.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Yeelight.html">Yeelight</a><ul class='methods'><li data-type='method'><a href="Yeelight.html#.discover">discover</a></li><li data-type='method'><a href="Yeelight.html#command">command</a></li><li data-type='method'><a href="Yeelight.html#cron_add">cron_add</a></li><li data-type='method'><a href="Yeelight.html#cron_del">cron_del</a></li><li data-type='method'><a href="Yeelight.html#cron_get">cron_get</a></li><li data-type='method'><a href="Yeelight.html#exit">exit</a></li><li data-type='method'><a href="Yeelight.html#get_prop">get_prop</a></li><li data-type='method'><a href="Yeelight.html#is_support">is_support</a></li><li data-type='method'><a href="Yeelight.html#parse">parse</a></li><li data-type='method'><a href="Yeelight.html#set_adjust">set_adjust</a></li><li data-type='method'><a href="Yeelight.html#set_bright">set_bright</a></li><li data-type='method'><a href="Yeelight.html#set_ct_abx">set_ct_abx</a></li><li data-type='method'><a href="Yeelight.html#set_default">set_default</a></li><li data-type='method'><a href="Yeelight.html#set_hsv">set_hsv</a></li><li data-type='method'><a href="Yeelight.html#set_music">set_music</a></li><li data-type='method'><a href="Yeelight.html#set_name">set_name</a></li><li data-type='method'><a href="Yeelight.html#set_power">set_power</a></li><li data-type='method'><a href="Yeelight.html#set_rgb">set_rgb</a></li><li data-type='method'><a href="Yeelight.html#set_scene">set_scene</a></li><li data-type='method'><a href="Yeelight.html#stop_cf">stop_cf</a></li><li data-type='method'><a href="Yeelight.html#sync">sync</a></li><li data-type='method'><a href="Yeelight.html#toggle">toggle</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">index.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const url          = require('url');
 const tcp          = require('net');
 const util         = require('util');
 const ssdp         = require('ssdp2');
@@ -24,7 +68,7 @@ function Yeelight(address, port){
     port    = u.port;
   }
   if(!(this instanceof Yeelight)){
-    console.debug('creating new instance of Yeelight with addr & port', address, port)
+    console.debug('creating new instance of Yeelight with addr &amp; port', address, port)
     return new Yeelight(address, port);
   }
   var buffer = '';
@@ -84,14 +128,14 @@ Yeelight.discover = function(port, callback){
   discover.on('response', function(response){
     var address = response.headers['Location'];
     console.debug('received response from', address);
-    if(address && (!~yeelights.indexOf(address))){
+    if(address &amp;&amp; (!~yeelights.indexOf(address))){
       yeelights.push(address);
       var yeelight = new Yeelight( address );
       
       yeelight.id = response.headers.id;
       yeelight.model = response.headers.model;
       const { support } = response.headers;
-      yeelight.supports = support && support.split(' ') || [];
+      yeelight.supports = support &amp;&amp; support.split(' ') || [];
       yeelight.on('connect', function(){
         callback.call(discover, this, response);
       });
@@ -154,7 +198,7 @@ Yeelight.prototype.parse = function(data){
     }
   }
   var results = data.toString().replace("}{","}}{{").split("}{");
-  for (i = 0; i < results.length; i++) {
+  for (i = 0; i &lt; results.length; i++) {
     parseResult(results[i]);
   }
   return this;
@@ -168,11 +212,11 @@ Yeelight.prototype.parse = function(data){
  */
 Yeelight.prototype.command = function(method, params){
   params = [].slice.call(params || []);
-  var id = (Math.random() * 1e3) & 0xff;
+  var id = (Math.random() * 1e3) &amp; 0xff;
   var request = { id, method, params };
   var message = JSON.stringify(request);
   request.promise = new Promise((accept, reject) => {
-    console.debug('<-', message);
+    console.debug('&lt;-', message);
     this.socket.write(message + '\r\n', err => {
       var respond = false;
       var timeout = setTimeout(function(){
@@ -376,7 +420,7 @@ Yeelight.prototype.set_adjust = function (action, prop){
  * @param port   [description]
  */
 Yeelight.prototype.set_music = function (action, host, port){
-  action = action & 0xff;
+  action = action &amp; 0xff;
   return this.command('set_music', arguments);
 };
 
@@ -390,3 +434,28 @@ Yeelight.prototype.exit = function(){
 };
 
 module.exports = Yeelight;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Wed Jul 24 2019 20:11:00 GMT+0800 (China Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

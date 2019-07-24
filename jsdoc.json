@@ -1,0 +1,12 @@
+{
+  "source": {
+    "include": ["README.md", "index.js"]
+  },
+  "opts": {
+    "encoding": "utf8",
+    "destination": "./docs/",
+    "template": "node_modules/docdash",
+    "recurse": true,
+    "verbose": true
+  }
+}
