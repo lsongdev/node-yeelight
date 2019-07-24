@@ -75,7 +75,11 @@ Yeelight.discover = function(port, callback){
     if(address && (!~yeelights.indexOf(address))){
       yeelights.push(address);
       var yeelight = new Yeelight( address );
+      
       yeelight.id = response.headers.id;
+      yeelight.model = response.headers.model;
+      const { support } = response.headers;
+      yeelight.supports = support && support.split(' ') || [];
       yeelight.on('connect', function(){
         callback.call(discover, this, response);
       });
@@ -84,6 +88,13 @@ Yeelight.discover = function(port, callback){
   });
   console.debug('start finding ...');
   return discover.search('wifi_bulb');
+};
+
+/**
+ * isSupport("set_rgb") ? => true or false
+ */
+Yeelight.prototype.isSupport = function(func){
+  return !!~this.supports.indexOf(func);
 };
 
 /**
