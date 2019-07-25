@@ -34,11 +34,14 @@ For a complete example look at <example/index.js> .
 To enable debug on Windows : 
 
 ```
-set DEBUG=yeelight
+set NODE_DEBUG=yeelight
 ```
 
 Then start your app.
 
+### Documentation
+
+see https://blog.lsong.org/node-yeelight
 
 ### Contributing
 - Fork this Repo first
