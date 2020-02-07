@@ -41,7 +41,7 @@ Then start your app.
 
 ### Documentation
 
-see https://blog.lsong.org/node-yeelight
+see https://lsong.org/node-yeelight
 
 ### Contributing
 - Fork this Repo first
