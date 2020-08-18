@@ -111,14 +111,56 @@ Yeelight.prototype.is_support = function(func){
 };
 
 /**
- * props 
+ * Current support property and it's possible value is defined as below 
  * @type {Array}
  */
 Yeelight.prototype.props = [
-  "name", "power", "bright", "rgb", 
-  "ct", "hue", "sat", "color_mode",
-  "delayoff", "flowing", "flow_params", 
-  "music_on"
+  // The name of the device set by “set_name” command
+  "name",
+  // on: smart LED is turned on / off: smart LED is turned off
+  "power", 
+  // Brightness percentage. Range 1 ~ 100
+  "bright",
+  // Color temperature. Range 1700 ~ 6500(k)
+  "ct", 
+  // Color. Range 1 ~ 16777215
+  "rgb", 
+  // Hue. Range 0 ~ 359
+  "hue", 
+  // Saturation. Range 0 ~ 100
+  "sat", 
+  // 1: rgb mode / 2: color temperature mode / 3: hsv mode
+  "color_mode",
+  // The remaining time of a sleep timer. Range 1 ~ 60 (minutes)
+  "delayoff",
+  // 0: no flow is running / 1:color flow is running
+  "flowing", 
+  // Current flow parameters (only meaningful when 'flowing' is 1)
+  "flow_params", 
+  // 1: Music mode is on / 0: Music mode is off
+  "music_on", 
+  // Background light power status
+  "bg_power", 
+  // Background light is flowing
+  "bg_flowing",
+  // Current flow parameters of background light
+  "bg_flow_params", 
+  // Color temperature of background light
+  "bg_ct", 
+  // 1: rgb mode / 2: color temperature mode / 3: hsv mode
+  "bg_lmode",
+  // Brightness percentage of background light
+  "bg_bright", 
+  // Color of background light
+  "bg_rgb", 
+  // Hue of background light
+  "bg_hue", 
+  // Saturation of background light
+  "bg_sat",
+  // Brightness of night mode light
+  "nl_br", 
+  // 0: daylight mode / 1: moonlight mode (ceiling light only)
+  "active_mode"
 ];
 
 /**
