@@ -357,11 +357,12 @@ Yeelight.prototype.set_bright = function (brightness, effect, duration){
 *              <li>"off" means turn off the smart LED. 
  * @param {String} effect   [description]
  * @param {Number} duration [description]
+ * @param {Number} mode [description]
  * @returns {Promise} see {@link Yeelight#command} 
  */
 Yeelight.prototype.set_power = function (power, effect, duration){
   power =  ~[ 1, true, '1','on' ].indexOf(power) ? 'on' : 'off';
-  return this.command('set_power', [ power, effect || 'smooth', duration || 500  ]);
+  return this.command('set_power', [ power, effect || 'smooth', duration || 500  ], mode || 0);
 };
 
 /**
