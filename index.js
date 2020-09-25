@@ -362,7 +362,7 @@ Yeelight.prototype.set_bright = function (brightness, effect, duration){
  */
 Yeelight.prototype.set_power = function (power, effect, duration){
   power =  ~[ 1, true, '1','on' ].indexOf(power) ? 'on' : 'off';
-  return this.command('set_power', [ power, effect || 'smooth', duration || 500  ], mode || 0);
+  return this.command('set_power', [ power, effect || 'smooth', duration || 500 , mode || 0 ]);
 };
 
 /**
