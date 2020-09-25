@@ -160,7 +160,7 @@ Yeelight.prototype.props = [
   // Brightness of night mode light
   "nl_br", 
   // 0: daylight mode / 1: moonlight mode (ceiling light only)
-  "active_mode"
+  // "active_mode"
 ];
 
 /**
@@ -357,11 +357,12 @@ Yeelight.prototype.set_bright = function (brightness, effect, duration){
 *              <li>"off" means turn off the smart LED. 
  * @param {String} effect   [description]
  * @param {Number} duration [description]
+ * @param {Number} mode [description]
  * @returns {Promise} see {@link Yeelight#command} 
  */
-Yeelight.prototype.set_power = function (power, effect, duration){
+Yeelight.prototype.set_power = function (power, effect, duration, mode) {
   power =  ~[ 1, true, '1','on' ].indexOf(power) ? 'on' : 'off';
-  return this.command('set_power', [ power, effect || 'smooth', duration || 500  ]);
+  return this.command('set_power', [ power, effect || 'smooth', duration || 500 , mode || 0 ]);
 };
 
 /**
