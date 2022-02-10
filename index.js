@@ -58,6 +58,11 @@ function Yeelight(address, port){
   return this;
 };
 
+Yeelight.prototype.close = function(){
+  this.socket.end();
+  this.socket.destroy();
+}
+
 /**
  * Yeelight extends EventEmitter
  */
@@ -82,15 +87,20 @@ Yeelight.discover = function(port, callback){
   var yeelights = [];
   var discover = ssdp({ port: port || 1982 });
   discover.on('response', function(response){
-    var address = response.headers['Location'];
-    console.debug('received response from', address);
+    console.debug(response.headers);
+    const { 
+      id, name, model, support,
+      color_mode, fw_ver,
+      Location: address, 
+    } = response.headers;
     if(address && (!~yeelights.indexOf(address))){
+      console.debug('received response from', address);
       yeelights.push(address);
       var yeelight = new Yeelight( address );
-      
-      yeelight.id = response.headers.id;
-      yeelight.model = response.headers.model;
-      const { support } = response.headers;
+      yeelight.id = id;
+      yeelight.model = model;
+      yeelight.address = address;
+      yeelight.firmware_version = fw_ver;
       yeelight.supports = support && support.split(' ') || [];
       yeelight.on('connect', function(){
         callback.call(discover, this, response);

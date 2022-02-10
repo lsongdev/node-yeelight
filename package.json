@@ -36,6 +36,7 @@
     "test": "test"
   },
   "dependencies": {
+    "kelp-cli": "^0.0.1",
     "ssdp2": "*"
   },
   "devDependencies": {
