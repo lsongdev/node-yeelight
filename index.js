@@ -85,7 +85,7 @@ Yeelight.discover = function(port, callback){
     callback = port; port = 1982;
   }
   var yeelights = [];
-  var discover = ssdp({ port: port || 1982 });
+  var discover = new ssdp({ port: port || 1982 });
   discover.on('response', function(response){
     console.debug(response.headers);
     const { 
@@ -104,6 +104,7 @@ Yeelight.discover = function(port, callback){
       yeelight.supports = support && support.split(' ') || [];
       yeelight.on('connect', function(){
         callback.call(discover, this, response);
+	discover.close()
       });
     };
   });
