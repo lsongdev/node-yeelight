@@ -22,8 +22,25 @@ Yeelight.discover(function(light){
   }
 
   setInterval(blink, 2000);
-  
+
+  // `Yeelight.discover` can discover multiple devices untill the ssdp close.
+  // So you need to close it manually. DO NOT FORGET IT.
+  // Here is an example to close it after find the first device.
+  const discover = this;
+  discover.close(); // stop searching
 });
+```
+
+Here is an example to close it after 10 seconds.
+
+```js
+const discover = Yeelight.discover(light => {
+  console.log(light.name);
+});
+
+setTimeout(() => {
+  discover.close(); // stop searching
+}, 10000);
 ```
 
 For a complete example look at <example/index.js> .
@@ -31,10 +48,8 @@ For a complete example look at <example/index.js> .
 
 ### Debug
 
-To enable debug on Windows : 
-
-```
-set NODE_DEBUG=yeelight
+```shell
+NODE_DEBUG=yeelight
 ```
 
 Then start your app.

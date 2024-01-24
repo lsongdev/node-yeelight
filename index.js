@@ -1,7 +1,7 @@
 const url          = require('url');
 const tcp          = require('net');
 const util         = require('util');
-const ssdp         = require('ssdp2');
+const SSDP         = require('ssdp2');
 const EventEmitter = require('events');
 
 /**
@@ -80,13 +80,14 @@ util.inherits(Yeelight, EventEmitter);
  *  console.log(light.name);
  * });
  */
-Yeelight.discover = function(port, callback){
+Yeelight.discover = function(port, callback) {
+  // TODO: `port` will rename to `opts` in next major version, then add `timeout` to opts
   if(typeof port === 'function'){
-    callback = port; port = 1982;
+    callback = port; port = null;
   }
-  var yeelights = [];
-  var discover = ssdp({ port: port || 1982 });
-  discover.on('response', function(response){
+  const yeelights = [];
+  const discover = new SSDP({ port: port || 1982 });
+  discover.on('response', function(response) {
     console.debug(response.headers);
     const { 
       id, name, model, support,
