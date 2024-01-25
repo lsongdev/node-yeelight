@@ -13,6 +13,18 @@ $ npm i yeelight2 --save
 ```js
 const Yeelight = require('yeelight2');
 
+(async () => { 
+  const light = await Yeelight.find();
+  console.log(light.name);
+  light.toggle();
+})();
+```
+
+Discover all devices in the network.
+
+```js
+const Yeelight = require('yeelight2');
+
 Yeelight.discover(function(light){
 
   console.log(light.name);
@@ -26,8 +38,8 @@ Yeelight.discover(function(light){
   // `Yeelight.discover` can discover multiple devices untill the ssdp close.
   // So you need to close it manually. DO NOT FORGET IT.
   // Here is an example to close it after find the first device.
-  const discover = this;
-  discover.close(); // stop searching
+  // const discover = this;
+  // discover.close(); // stop searching
 });
 ```
 

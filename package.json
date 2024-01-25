@@ -1,6 +1,6 @@
 {
   "name": "yeelight2",
-  "version": "1.3.8",
+  "version": "1.3.9",
   "main": "index.js",
   "types": "./types/index.d.ts",
   "bin": {
@@ -29,14 +29,14 @@
   "bugs": {
     "url": "https://github.com/song940/node-yeelight/issues"
   },
-  "homepage": "https://blog.lsong.org/node-yeelight",
+  "homepage": "https://lsong.org/node-yeelight",
   "directories": {
     "doc": "docs",
     "example": "example",
     "test": "test"
   },
   "dependencies": {
-    "kelp-cli": "^0.0.1",
+    "kelp-cli": "*",
     "ssdp2": "*"
   },
   "devDependencies": {

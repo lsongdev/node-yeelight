@@ -113,6 +113,24 @@ Yeelight.discover = function(port, callback) {
 };
 
 /**
+ * Find Yeelight blub
+ */
+Yeelight.find = (opts = {}) => {
+  const { timeout = 12000 } = opts;
+  return new Promise((accept, reject) => {
+    const discover = Yeelight.discover(yeelight => {
+      clearTimeout(timer);
+      accept(yeelight);
+      discover.close();
+    });
+    var timer = setTimeout(() => {
+      discover.close();
+      reject(new Error('timeout'));
+    }, timeout);
+  });
+};
+
+/**
  * is_support("set_rgb")
  * @param {String} func
  * @return {Boolean} isSupport
