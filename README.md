@@ -80,6 +80,12 @@ see https://lsong.org/node-yeelight
 - Publish your local branch, Open a pull request
 - Enjoy hacking <3
 
+### Golang Implementation
+
+> Golang API for Yeelight
+> 
+> https://github.com/song940/yeelight-go
+
 ### MIT
 
 Copyright (c) 2016 Lsong &lt;song940@gmail.com&gt;
