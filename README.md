@@ -35,7 +35,7 @@ Yeelight.discover(function(light){
 
   setInterval(blink, 2000);
 
-  // `Yeelight.discover` can discover multiple devices untill the ssdp close.
+  // `Yeelight.discover` can discover multiple devices until the SSDP discovery instance is closed.
   // So you need to close it manually. DO NOT FORGET IT.
   // Here is an example to close it after find the first device.
   // const discover = this;
